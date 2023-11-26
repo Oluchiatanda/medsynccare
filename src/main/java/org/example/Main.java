@@ -24,12 +24,18 @@ import static spark.Spark.*;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        String databaseUrl = "jdbc:mysql://localhost:3306/medsynccare";
+        //String databaseUrl = "jdbc:mysql://localhost:3306/medsynccare";
+
+        //
+        String databaseUrl = "jdbc:mysql://brw5tkmsxwef0x7hbdqa-mysql.services.clever-cloud.com:21695/brw5tkmsxwef0x7hbdqa";
 
         ConnectionSource connectionSource = new JdbcConnectionSource(databaseUrl);
 
-        ((JdbcConnectionSource)connectionSource).setUsername("Meenah");
-        ((JdbcConnectionSource)connectionSource).setPassword("Meenah@123");
+                ((JdbcConnectionSource)connectionSource).setUsername("udzq4ppzdmskm77i");
+        ((JdbcConnectionSource)connectionSource).setPassword("upOZb21L5hvY592kvg9");
+
+        //((JdbcConnectionSource)connectionSource).setUsername("Meenah");
+        // ((JdbcConnectionSource)connectionSource).setPassword("Meenah@123");
 
         // instantiate the dao
         Dao<Patient, String> patientDao = DaoManager.createDao(connectionSource, Patient.class);
