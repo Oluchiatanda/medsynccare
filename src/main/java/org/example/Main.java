@@ -29,12 +29,12 @@ public class Main {
         //String databaseUrl = "jdbc:mysql://localhost:3306/medsynccare";
 
         //
-        String databaseUrl = "jdbc:mysql://brw5tkmsxwef0x7hbdqa-mysql.services.clever-cloud.com:21695/brw5tkmsxwef0x7hbdqa";
+        String databaseUrl = "jdbc:mysql://bj7vpoxh4oiqauk8vory-mysql.services.clever-cloud.com:3306/bj7vpoxh4oiqauk8vory";
 
         ConnectionSource connectionSource = new JdbcConnectionSource(databaseUrl);
 
-                ((JdbcConnectionSource)connectionSource).setUsername("udzq4ppzdmskm77i");
-        ((JdbcConnectionSource)connectionSource).setPassword("upOZb21L5hvY592kvg9");
+                ((JdbcConnectionSource)connectionSource).setUsername("ufwbusqfrj1hpbmo");
+        ((JdbcConnectionSource)connectionSource).setPassword("ib3NZQ9PDI97n0xEG7SH");
 
         //((JdbcConnectionSource)connectionSource).setUsername("Meenah");
         // ((JdbcConnectionSource)connectionSource).setPassword("Meenah@123");
