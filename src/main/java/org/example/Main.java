@@ -18,6 +18,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 import static spark.Spark.*;
 
@@ -41,9 +43,13 @@ public class Main {
         Dao<Patient, String> patientDao = DaoManager.createDao(connectionSource, Patient.class);
         Dao<Medication, String> medicationDao = DaoManager.createDao(connectionSource, Medication.class);
 
+        Dao<Reminder, String> reminderDao = DaoManager.createDao(connectionSource, Reminder.class);
+
         // if you need to create the 'patients' table make this call
         TableUtils.createTableIfNotExists(connectionSource, Patient.class);
         TableUtils.createTableIfNotExists(connectionSource, Medication.class);
+        TableUtils.createTableIfNotExists(connectionSource, Reminder.class);
+
 
         path("/api", () -> {
             // Endpoint to register a patient
@@ -53,11 +59,11 @@ public class Main {
                 Gson gson = new Gson();
                 Patient patient = gson.fromJson(requestBody, Patient.class);
                 // Save patient to the database
-                System.out.println("omo " + patient.getEmailAddress() + requestBody);
+                //  System.out.println("omo " + patient.getEmailAddress() + requestBody);
                 patientDao.create(patient);
 
                 // Return a success message and response
-                System.out.println("register " + response);
+                // System.out.println("register " + response);
                 return "Patient registered successfully";
             });
 
@@ -126,30 +132,37 @@ public class Main {
                 }
             });
 
-            // Endpoint to send notification (this is just a placeholder, implement your notification logic)
-            post("/send-notification/:id", (request, response) -> {
-                int patientId = Integer.parseInt(request.params(":id"));
+            // Endpoint to create reminder
+            post("/reminders", (request, response) -> {
+                // Extract JSON body
+                String requestBody = request.body();
+                Gson gson = new Gson();
+                Reminder reminder = gson.fromJson(requestBody, Reminder.class);
+                System.out.println("oii"+reminder.getDateTime());
 
-                // Retrieve patient from the database
-                Patient patient = patientDao.queryForId(String.valueOf(patientId));
-
-                if (patient != null) {
-                    // Implement your notification logic here
-                    String notificationToken = patient.getNotificationToken();
-                    // Send notification using the notification token
-                    if (notificationToken != null && !notificationToken.isEmpty()) {
-                        // Simulate sending a push notification
-                        sendPushNotification(notificationToken, "Take your drugs by " );
-                        return "Notification sent successfully";
-                    } else {
-                        response.status(400); // Bad Request
-                        return "Patient has no valid notification token";
-                    }
-                } else {
-                    response.status(404); // Not Found
-                    return "Patient not found";
-                }
+                // Parse the request body and create a new medical adherence reminder
+                // Save the reminder locally
+                reminderDao.create(reminder);
+                return "Reminder created successfully";
             });
+
+            // Endpoint to sync reminder
+            post("/sync", (request, response) -> {
+                String requestBody = request.body();
+
+                System.out.println("reqlist "+ requestBody);
+
+                // Parse the request body and update local reminders
+                List<Reminder> receivedReminders = Arrays.asList(new Gson().fromJson(requestBody, Reminder[].class));
+                System.out.println("list1 "+receivedReminders.get(1));
+
+                syncReminders(receivedReminders);
+                System.out.println("list "+receivedReminders.get(1));
+                return "Sync successful";
+            });
+
+
+
         });
 
 
@@ -181,28 +194,9 @@ public class Main {
         connectionSource.close();
 
     }
-
-    private static void sendPushNotification(String notificationToken, String message) throws Exception {
-        // Simulate sending a push notification
-
-    }
-
-    // A simple class representing the notification request
-    static class NotificationRequest {
-        private String token;
-        private String message;
-
-        public NotificationRequest(String token, String message) {
-            this.token = token;
-            this.message = message;
-        }
-
-        // Getters and setters
-    }
-
-    private static String generateAccessToken() {
-        // Implement a proper token generation method (e.g., JWT)
-        // For simplicity, this example generates a random string
-        return java.util.UUID.randomUUID().toString();
+    // Method for syncing reminders
+    private static void syncReminders(List<Reminder> reminders) {
+        // Logic to update the backend database with the received reminders
+        // ...
     }
 }
